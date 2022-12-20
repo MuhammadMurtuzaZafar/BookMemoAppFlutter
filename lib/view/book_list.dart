@@ -44,10 +44,18 @@ class BookList extends StatelessWidget {
   Widget myCard(Book b) {
     return Card(
       elevation: 1.5,
+      color:  Color(0xFF4B4848),
       child: ListTile(
         title: Text(b.title),
+        subtitle: Text(b.year.toString()),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(onPressed: (){}, icon: const Icon(Icons.edit,color: Colors.white,)),
+            const SizedBox(width: 10,),
+            IconButton(onPressed: (){}, icon: const Icon(Icons.delete,color: Colors.white,))
 
-        trailing: Text(b.year.toString()),
+          ],),
       ),
     );
   }
@@ -104,10 +112,8 @@ class BookList extends StatelessWidget {
                   ],
                 ),
                 actions: [
-
                   MaterialButton(onPressed: () {
-                    bloc.add(
-                        FormSubmitEvent(_bookNameCon.text, _bookYearCon.text));
+                    bloc.add(FormSubmitEvent(_bookNameCon.text, _bookYearCon.text));
                   }, child: const Text("Add"),),
                 ],
               );
