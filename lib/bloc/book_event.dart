@@ -17,3 +17,16 @@ class FormSubmitEvent extends BookEvent{
   FormSubmitEvent(this.book, this.year);
 }
 class FetchBookEvent extends BookEvent{}
+class DeleteBookEvent extends BookEvent{
+  int id;
+
+  DeleteBookEvent(this.id);
+}
+class EditBookEvent extends BookEvent{
+  Book book;
+  EditBookEvent(this.book);
+}
+class EditSubmitEvent extends BookEvent{
+  Book book;
+  EditSubmitEvent(this.book);
+}

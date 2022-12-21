@@ -24,4 +24,10 @@ class BookYearErrorState extends BookState{
   String error;
   BookYearErrorState(this.error);
 }
+class BookEditState extends BookState
+{
+  Book book;
+
+  BookEditState(this.book);
+}
 
