@@ -7,8 +7,7 @@ import '../models/book.dart';
 
 class BookList extends StatelessWidget {
 
-  final TextEditingController _bookNameCon = TextEditingController();
-  final TextEditingController _bookYearCon = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +20,17 @@ class BookList extends StatelessWidget {
       body: BlocConsumer<BookBloc, BookState>(
         bloc: bloc,
         listener: (context, state) {
+          if(state is BookEditState)
+          {
+            showAlert(context, bloc,b: state.book,editAble: true);
+          }
         },
         builder: (context, state) {
           return state is BookLoadingState && state.load?const Center(child: CupertinoActivityIndicator(color: Colors.white,)): ListView.builder(
             physics: const BouncingScrollPhysics(),
             itemCount: bloc.bookList.length,
             itemBuilder: (context, index) {
-              return myCard(bloc.bookList[index]);
+              return myCard(bloc.bookList[index],context);
             },
           );
         },
@@ -41,7 +44,7 @@ class BookList extends StatelessWidget {
     );
   }
 
-  Widget myCard(Book b) {
+  Widget myCard(Book b,context) {
     return Card(
       elevation: 1.5,
       color:  Color(0xFF4B4848),
@@ -51,16 +54,29 @@ class BookList extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(onPressed: (){}, icon: const Icon(Icons.edit,color: Colors.white,)),
+            IconButton(onPressed: (){
+              BlocProvider.of<BookBloc>(context).add(EditBookEvent(b));
+            }, icon: const Icon(Icons.edit,color: Colors.white,size: 18,)),
             const SizedBox(width: 10,),
-            IconButton(onPressed: (){}, icon: const Icon(Icons.delete,color: Colors.white,))
+            IconButton(onPressed: (){
+              BlocProvider.of<BookBloc>(context).add(DeleteBookEvent(b.id));
+
+            }, icon: const Icon(Icons.delete,color: Colors.white,size: 18,))
 
           ],),
       ),
     );
   }
 
-  void showAlert(context, bloc) {
+  void showAlert(context, bloc,{  Book? b,bool editAble=false}) {
+    final TextEditingController bookNameCon = TextEditingController();
+    final TextEditingController bookYearCon = TextEditingController();
+
+    if(editAble)
+    {
+      bookNameCon.text=b!.title;
+      bookYearCon.text=b.year.toString();
+    }
     showDialog(
       context: context,
       builder: (context) =>
@@ -74,13 +90,13 @@ class BookList extends StatelessWidget {
             bloc: bloc,
             builder: (context, state) {
               return AlertDialog(
-                title: const Text("Add New"),
+                title:  Text(editAble?"Edit":"Add New"),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
 
                     TextField(
-                        controller: _bookNameCon,
+                        controller: bookNameCon,
                         decoration: InputDecoration(
                             border: const OutlineInputBorder(),
                             errorText: state is BookNameErrorState
@@ -95,7 +111,7 @@ class BookList extends StatelessWidget {
                       height: 20,
                     ),
                     TextField(
-                      controller: _bookYearCon,
+                      controller: bookYearCon,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
@@ -105,6 +121,7 @@ class BookList extends StatelessWidget {
                             : null,
                       ),
                       onChanged: (v) {
+
                         bloc.add(FormYearChangeEvent(v));
                       },
                     ),
@@ -113,7 +130,15 @@ class BookList extends StatelessWidget {
                 ),
                 actions: [
                   MaterialButton(onPressed: () {
-                    bloc.add(FormSubmitEvent(_bookNameCon.text, _bookYearCon.text));
+                    if(editAble)
+                    {
+                      bloc.add(EditSubmitEvent(Book(b!.id, bookNameCon.text, int.parse(bookYearCon.text))));
+                    }
+                    else
+                    {
+                      bloc.add(FormSubmitEvent(bookNameCon.text, bookYearCon.text));
+
+                    }
                   }, child: const Text("Add"),),
                 ],
               );

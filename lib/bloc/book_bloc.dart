@@ -65,6 +65,34 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         emit(BookLoadingState(false));
     });
 
+    on<DeleteBookEvent>((event, emit) {
+      _bookRepo.delete(event.id);
+      add(FetchBookEvent());
+    });
+
+    on<EditBookEvent>((event, emit) {
+      emit(BookEditState(event.book));
+    });
+
+    on<EditSubmitEvent>((event, emit) {
+      if(event.book.title.isEmpty){
+        return emit(BookNameErrorState("Please Enter a Book Name"));
+      }
+      else  if(event.book.year.toString().isEmpty)
+      {
+        return emit(BookYearErrorState("Please Enter a Year Name"));
+      }
+      else  if(!_isNumeric(event.book.year.toString()))
+      {
+        return emit(BookYearErrorState("Please Enter a Year Name"));
+      }
+      else{
+        _bookRepo.update(event.book);
+        add(FetchBookEvent());
+        return  emit(BookFormValidState());
+      }
+
+    });
     add(FetchBookEvent());
 
 
