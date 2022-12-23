@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_repository_pattern/search/custom_search.dart';
 
 import '../bloc/book_bloc.dart';
 import '../models/book.dart';
@@ -16,6 +17,12 @@ class BookList extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Books"),
+        actions:  [
+         IconButton(onPressed: (){
+           showSearch(context: context, delegate: CustomSearch());
+
+         }, icon:  Icon(Icons.search))
+        ],
       ),
       body: BlocConsumer<BookBloc, BookState>(
         bloc: bloc,
@@ -26,12 +33,18 @@ class BookList extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return state is BookLoadingState && state.load?const Center(child: CupertinoActivityIndicator(color: Colors.white,)): ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: bloc.bookList.length,
-            itemBuilder: (context, index) {
-              return myCard(bloc.bookList[index],context);
+          return state is BookLoadingState && state.load?const Center(child: CupertinoActivityIndicator(color: Colors.white,)):
+          RefreshIndicator(
+            onRefresh: () async{
+
+              bloc.add(FetchBookEvent());
             },
+            child: ListView.builder(
+              itemCount: bloc.bookList.length,
+              itemBuilder: (context, index) {
+                return myCard(bloc.bookList[index],context);
+              },
+            ),
           );
         },
       ),
@@ -47,7 +60,7 @@ class BookList extends StatelessWidget {
   Widget myCard(Book b,context) {
     return Card(
       elevation: 1.5,
-      color:  Color(0xFF4B4848),
+      color:  const Color(0xFF4B4848),
       child: ListTile(
         title: Text(b.title),
         subtitle: Text(b.year.toString()),
