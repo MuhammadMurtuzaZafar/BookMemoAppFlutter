@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../constant/app_constant.dart';
+
 class DatabaseProvider{
 
   static final DatabaseProvider dbProvider=DatabaseProvider();
@@ -30,7 +32,7 @@ class DatabaseProvider{
     Directory docDirectory=await getApplicationDocumentsDirectory();
     String path=join(docDirectory.path,"book.db");
     var database=await openDatabase(path,version: 1,onCreate:(Database db,int version)async{
-      await db.execute("CREATE Table bookTable (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT,year INTEGER)");
+      await db.execute("CREATE Table ${AppConstant.tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT,year INTEGER)");
     },
     );
     return database;

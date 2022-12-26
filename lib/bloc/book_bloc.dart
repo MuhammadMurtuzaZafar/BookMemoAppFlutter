@@ -12,7 +12,7 @@ part 'book_state.dart';
 
 class BookBloc extends Bloc<BookEvent, BookState> {
 
-  final BookRepositories _bookRepo = BookRepositories(VirtualDB());
+  final BookRepositories _bookRepo = BookRepositories();
   List<Book> bookList=[];
 
   BookBloc() : super(BookInitial()) {
