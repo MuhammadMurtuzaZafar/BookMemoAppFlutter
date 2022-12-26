@@ -1,4 +1,5 @@
 import 'package:flutter_repository_pattern/db/database_provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../constant/app_constant.dart';
 import '../models/book.dart';
@@ -9,7 +10,7 @@ class DatabaseController{
 
   Future<int> createBookRow(Book b) async{
     final db=await dbClient.db;
-    var result=await db.insert(AppConstant.tableName, b.toMap());
+    var result=await db.insert(AppConstant.tableName, b.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
     return result;
   }
 
