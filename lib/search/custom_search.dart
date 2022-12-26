@@ -1,14 +1,19 @@
 
 
 import 'package:flutter/material.dart';
-var suggestion=["Qadeer","Tipu qadeer","Bekar Wadeer"];
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_repository_pattern/bloc/book_bloc.dart';
+import 'package:flutter_repository_pattern/models/book.dart';
 
 class CustomSearch extends SearchDelegate{
 
-  List<String> allNames = ["ahmed", "ali", "john", "user"];
 
 
-  List<String> searchResult=[];
+  List<Book> bookList;
+
+
+  CustomSearch(this.bookList);
+
   @override
   List<Widget>? buildActions(BuildContext context) {
 
@@ -16,7 +21,7 @@ class CustomSearch extends SearchDelegate{
       IconButton(onPressed: (){
         query='';
 
-      }, icon: const Icon(Icons.search))
+      }, icon: const Icon(Icons.close))
     ];
   }
 
@@ -32,8 +37,12 @@ class CustomSearch extends SearchDelegate{
   @override
   Widget buildResults(BuildContext context) {
 
-    return Container();
-
+    final suggestList=query.isEmpty?[]:bookList.where((element) => element.title.contains(query)).toList();
+    return ListView.builder(
+      itemCount: suggestList.length,
+      itemBuilder: (context, index) {
+        return myCard(bookList[index],context);
+      },);
   }
 
 
@@ -41,21 +50,28 @@ class CustomSearch extends SearchDelegate{
   Widget buildSuggestions(BuildContext context) {
 
 
-    final suggestList=query.isEmpty?suggestion:allNames.where((element) => element.startsWith(query)).toList();
+    final suggestList=query.isEmpty?bookList:bookList.where((element) => element.title.contains(query)).toList();
     return ListView.builder(
         itemCount: suggestList.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            onTap: () {
-              if (query.isEmpty) {
-                query = suggestion[index];
-              }
-            },
-            title: Text(suggestList[index]),
-          );
+          return myCard(bookList[index],context);
         },);
   }
 
+  Widget myCard(Book b,context) {
+    return Card(
+      elevation: 1.5,
+      color:  const Color(0xFF4B4848),
+      child: ListTile(
+        onTap: ()
+        {
+          query=b.title;
+        },
+        title: Text(b.title),
+        subtitle: Text(b.year.toString()),
+      ),
+    );
+  }
 
   @override
   ThemeData appBarTheme(BuildContext context) {

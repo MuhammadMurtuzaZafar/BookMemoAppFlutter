@@ -12,16 +12,17 @@ class BookList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of<BookBloc>(context);
+    var bloc = BlocProvider.of<BookBloc>(context) ;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Books"),
         actions:  [
          IconButton(onPressed: (){
-           showSearch(context: context, delegate: CustomSearch());
+           showSearch(context: context,
+               delegate: CustomSearch(bloc.bookList));
 
-         }, icon:  Icon(Icons.search))
+         }, icon:  const Icon(Icons.search))
         ],
       ),
       body: BlocConsumer<BookBloc, BookState>(

@@ -51,7 +51,9 @@ class MyApp extends StatelessWidget {
       home: BlocProvider(
         create: (context) => BookBloc(),
         child: BookList(),
+
       ),
+
     );
   }
 }
