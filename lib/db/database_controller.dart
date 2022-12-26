@@ -16,7 +16,7 @@ class DatabaseController{
 
   Future<List<Book>> getAllBooks({List<String>? columns})async{
     final db=await dbClient.db;
-    var result=await db.query(AppConstant.tableName,columns:columns );
+    var result=await db.query(AppConstant.tableName,columns:columns ,orderBy: "id DESC");
     List<Book> books=result.isNotEmpty ?result.map((e) => Book.fromMap(e)).toList():[];
     return books;
   }

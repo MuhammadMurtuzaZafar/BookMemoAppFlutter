@@ -32,7 +32,8 @@ class DatabaseProvider{
     Directory docDirectory=await getApplicationDocumentsDirectory();
     String path=join(docDirectory.path,"book.db");
     var database=await openDatabase(path,version: 1,onCreate:(Database db,int version)async{
-      await db.execute("CREATE Table ${AppConstant.tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT,year INTEGER)");
+      await db.execute("CREATE Table ${AppConstant.tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT,year INTEGER,"
+          "timeStamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
     },
     );
     return database;
